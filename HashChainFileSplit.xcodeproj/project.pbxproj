@@ -7,7 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F02D83FF1A3837B8002C6528 /* FileInput.c in Sources */ = {isa = PBXBuildFile; fileRef = F02D83FD1A3837B8002C6528 /* FileInput.c */; };
 		F032CC4C1A354FA50046D788 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F032CC4B1A354FA50046D788 /* main.c */; };
+		F032CC561A35548A0046D788 /* LinkedList.c in Sources */ = {isa = PBXBuildFile; fileRef = F032CC541A35548A0046D788 /* LinkedList.c */; };
+		F032CC5B1A3560460046D788 /* HashChaining.c in Sources */ = {isa = PBXBuildFile; fileRef = F032CC5A1A3560460046D788 /* HashChaining.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,8 +26,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F02D83FD1A3837B8002C6528 /* FileInput.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = FileInput.c; sourceTree = "<group>"; };
+		F02D83FE1A3837B8002C6528 /* FileInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileInput.h; sourceTree = "<group>"; };
 		F032CC481A354FA50046D788 /* HashChainFileSplit */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = HashChainFileSplit; sourceTree = BUILT_PRODUCTS_DIR; };
 		F032CC4B1A354FA50046D788 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		F032CC521A3550A00046D788 /* HashChaining.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HashChaining.h; sourceTree = "<group>"; };
+		F032CC541A35548A0046D788 /* LinkedList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LinkedList.c; sourceTree = "<group>"; };
+		F032CC551A35548A0046D788 /* LinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkedList.h; sourceTree = "<group>"; };
+		F032CC5A1A3560460046D788 /* HashChaining.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = HashChaining.c; sourceTree = "<group>"; };
+		F032CC5C1A356A000046D788 /* DataTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataTypes.h; path = ../DataTypes.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +67,14 @@
 		F032CC4A1A354FA50046D788 /* HashChainFileSplit */ = {
 			isa = PBXGroup;
 			children = (
+				F032CC5C1A356A000046D788 /* DataTypes.h */,
 				F032CC4B1A354FA50046D788 /* main.c */,
+				F032CC521A3550A00046D788 /* HashChaining.h */,
+				F032CC541A35548A0046D788 /* LinkedList.c */,
+				F032CC551A35548A0046D788 /* LinkedList.h */,
+				F032CC5A1A3560460046D788 /* HashChaining.c */,
+				F02D83FD1A3837B8002C6528 /* FileInput.c */,
+				F02D83FE1A3837B8002C6528 /* FileInput.h */,
 			);
 			path = HashChainFileSplit;
 			sourceTree = "<group>";
@@ -118,7 +135,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F02D83FF1A3837B8002C6528 /* FileInput.c in Sources */,
+				F032CC561A35548A0046D788 /* LinkedList.c in Sources */,
 				F032CC4C1A354FA50046D788 /* main.c in Sources */,
+				F032CC5B1A3560460046D788 /* HashChaining.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,6 +252,7 @@
 				F032CC511A354FA50046D788 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
