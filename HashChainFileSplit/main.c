@@ -9,9 +9,10 @@
 #include "HashChaining.h"
 #include <time.h>
 #include <malloc/malloc.h>
+#include "FileInput.h"
 
 #define MAX_HORIZANTAL_CACHE_SIZE 10
-#define MAX_CACHE_SIZE 29
+#define MAX_CACHE_SIZE 1024*1024
 
 /*int plainKeys1 [] =  {11, 21, 31, 41, 51};
 int plainKeys2 [] =  {12, 22, 32, 42, 52};
@@ -32,7 +33,7 @@ int inputKeysn [] = {14, 44, 64, 74, 13, 15, 84, 61 , 51};
 
 //int inputKeysn1 [] = {51};
 
-List DummyDataFiller(int dataArray [], HashTable* HT , int actualLoopPeriod, List Lrulist){
+/*List DummyDataFiller(int dataArray [], HashTable* HT , int actualLoopPeriod, List Lrulist){
     Node* newNode = NULL;
     Node* LRUNode = NULL;
     int loopPeriod = actualLoopPeriod;
@@ -47,6 +48,65 @@ List DummyDataFiller(int dataArray [], HashTable* HT , int actualLoopPeriod, Lis
     
     return Lrulist;
     
+} */
+
+/*void RandomDataFill(HashTable* HT, ElementType inputValue, Node** Lrulist){
+    Node* newNode = NULL;
+    Node* LRUNode = NULL;
+    newNode = CreateNode(inputValue, inputValue);
+    LRUNode = CreateNodeLRU(inputValue);
+    AppendNodeIntoAHashTable(HT, newNode);
+    AppendNodeLRU(Lrulist, LRUNode);
+} */
+
+void FileDataFill(HashTable* HT, Node** Lrulist){
+    FILE* filePointer;
+    
+    //List aNewNodeList = NULL;
+    // List lastNodeContainer = NULL;
+    
+    double timeInMilliSec=0;
+    double deviceIDNo=0;
+    long sectorNo = 0;
+    int noOfSectorsForOperation =0;
+    int readOrWrite=0;
+    
+    char read;
+    char* line = NULL;
+    int i = 0;
+    size_t len = 0;
+    
+    
+    
+    filePointer = fopen("/Users/inchanhwang/Desktop/fin.txt", "r");
+    
+    
+    
+    if(filePointer == NULL){
+        printf("파일을 열 수 없습니다.\n" );
+        exit(1);
+    }
+    
+    while((read = getline(&line, &len, filePointer)) != -1){
+        sscanf(line, "%lf %lf %ld %d %d", &timeInMilliSec, &deviceIDNo, &sectorNo, &noOfSectorsForOperation, &readOrWrite);
+        // printf("%lf %lf %ld %d %d\n", firstVal, secVal, thirdVal, fourthVal, fifthVal);
+        Node* aNode = CreateNodeLRU(sectorNo);
+        Node* aHashNode = CreateNode(sectorNo, sectorNo);
+        //aNewNodeList =
+        AppendNodeFileCircularLinkedList(Lrulist, aNode);
+        AppendNodeIntoAHashTable(HT, aHashNode);
+        
+        //  printf("\r Time in MilliSec: %lf . Sector No. reading : %ld. Sectors in operation at the moment: %d", timeInMilliSec, sectorNo, noOfSectorsForOperation);
+        //printf("\r%ld",  sectorNo);
+        //clrscr();
+        i++;
+        if(i%1000 == 0){
+            printf("\r Time in MilliSec: %lf . Sector No. reading : %ld. Sectors in operation at the moment: %d", timeInMilliSec, sectorNo, noOfSectorsForOperation);
+        }
+    }
+    printf("\r Time in MilliSec: %lf . Sector No. reading : %ld. Sectors in operation at the moment: %d", timeInMilliSec, sectorNo, noOfSectorsForOperation);
+    
+    //return aNewNodeList;
 }
 
 void ActualDataFiller(HashTable* HT, int integer){
@@ -61,7 +121,7 @@ void DisplayList(Node* List){
     Node* current = NULL;
     for(int i = 0; i<listSize; i++){
         current = GetNodeAtLRU(List, i);
-        printf(" %d ", current->value);
+        printf(" %ld ", current->value);
     }
     printf("\n");
     
@@ -72,7 +132,7 @@ int main(int argc, const char * argv[]) {
   /*  int hitCounter=0;
     
     int numberOfAccessAttempts = 10;*/
-    int tableSize = 5;
+    int tableSize = 1024;
   //  int contentsIntheCache = 100;
     
     
@@ -83,7 +143,7 @@ int main(int argc, const char * argv[]) {
     
     List aSampleList = NULL;
     
-   // srand(time(NULL));
+    srand(time(NULL));
     
     Node* LRUOperationTemp = NULL;
     
@@ -94,12 +154,18 @@ int main(int argc, const char * argv[]) {
     Node* lruList = NULL;
     
     
-    lruList = DummyDataFiller(plainKeys1, HT, sizeof(plainKeys1)/sizeof(int), lruList);
+    FileDataFill(HT, &lruList);
+    printf("\nFile reading has been complete!\n");
+    /*for(int i = 0; i<100; i++){
+        RandomDataFill(HT, rand()%100, &lruList);
+    }*/
+    
+    /*lruList = DummyDataFiller(plainKeys1, HT, sizeof(plainKeys1)/sizeof(int), lruList);
     lruList = DummyDataFiller(plainKeys2, HT, sizeof(plainKeys2)/sizeof(int), lruList);
     lruList = DummyDataFiller(plainKeys3, HT, sizeof(plainKeys3)/sizeof(int), lruList);
     lruList = DummyDataFiller(plainKeys4, HT, sizeof(plainKeys4)/sizeof(int), lruList);
-    lruList = DummyDataFiller(plainKeys5, HT, sizeof(plainKeys5)/sizeof(int), lruList);
-    
+    lruList = DummyDataFiller(plainKeys5, HT, sizeof(plainKeys5)/sizeof(int), lruList);*/
+    /*
     printf("Initial Hash Entries\n");
     
     for(int i = 0; i<tableSize; i++){
@@ -145,7 +211,13 @@ int main(int argc, const char * argv[]) {
                 RemoveNodeLRU(&lruList, LRUOperationTemp);
             }
         }
-    }
+    }*/
+    
+    //TheOne I used
+     
+     
+     
+     
    /* for(int i = 0; i<sizeof(inputKeysn)/sizeof(int); i++){
         int randomKey = inputKeysn[i];
         printf("%d  ", randomKey);
@@ -176,7 +248,7 @@ int main(int argc, const char * argv[]) {
 
 
    // lruList = inputToLRULine(lruList, 63);
-    
+    /*
     printf("\n\nThe list of modified LRU input: ");
     DisplayList(lruList);
     
@@ -196,7 +268,7 @@ int main(int argc, const char * argv[]) {
         }
         printf("\n");
     }
-
+     */
     
     
     

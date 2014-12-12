@@ -22,7 +22,7 @@ HashTable* CreateHashTable(int TableSize){
     return HashTableInstance;
 }
 
-void AppendNodeIntoAHashTable(HashTable* HashTB, Node* newNode){
+/*void AppendNodeIntoAHashTable(HashTable* HashTB, Node* newNode){
     int GeneratedHashAddress = CHT_HashForInteger(newNode->key, HashTB->TableSize);
     
     if(HashTB->linkedListsIntheTable[GeneratedHashAddress] == NULL){
@@ -37,7 +37,29 @@ void AppendNodeIntoAHashTable(HashTable* HashTB, Node* newNode){
         newNode->prevNode = tail;
         
     }
+}*/
+
+void AppendNodeIntoAHashTable(HashTable* HashTB, Node* newNode){
+    
+    int GeneratedHashAddress = CHT_HashForInteger(newNode->key, HashTB->TableSize);
+    
+    if(HashTB->linkedListsIntheTable[GeneratedHashAddress] == NULL){
+        HashTB->linkedListsIntheTable[GeneratedHashAddress] = newNode;
+        (HashTB->linkedListsIntheTable[GeneratedHashAddress])->nextNode = (HashTB->linkedListsIntheTable[GeneratedHashAddress]);
+        (HashTB->linkedListsIntheTable[GeneratedHashAddress])->prevNode = (HashTB->linkedListsIntheTable[GeneratedHashAddress]);
+    } else {
+        Node* tail = (HashTB->linkedListsIntheTable[GeneratedHashAddress])->prevNode;
+        
+        tail->nextNode->prevNode = newNode;
+        tail->nextNode = newNode;
+        
+        newNode->nextNode=(HashTB->linkedListsIntheTable[GeneratedHashAddress]);
+        newNode->prevNode=tail;
+        
+        
+    }
 }
+
 
 ElementType RetriveAHashValue(HashTable* HT, ElementType Key){
     int Address = CHT_HashForInteger(Key, HT->TableSize);

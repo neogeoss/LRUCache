@@ -178,7 +178,7 @@ List LRUOperationForAsingleBuffer(List thList, ElementType Key, ElementType resu
     return newProcessedList;
 }
 
-void AppendNodeLRU(Node** Head, Node* NewNode){
+/*void AppendNodeLRU(Node** Head, Node* NewNode){
     if((*Head) == NULL){
         *Head = NewNode;
     } else {
@@ -193,24 +193,80 @@ void AppendNodeLRU(Node** Head, Node* NewNode){
     
     
     
+}*/
+
+
+void AppendNodeFileCircularLinkedList(Node** Head, Node* NewNode){
+    if((*Head) == NULL){
+        *Head = NewNode;
+        (*Head)->lruNode = *Head;
+        (*Head)->prevNode = *Head;
+    }
+    else
+    {
+        Node* Tail = (*Head)->prevNode;
+        
+        Tail->lruNode->prevNode = NewNode;
+        Tail->lruNode=NewNode;
+        
+        NewNode->lruNode = (*Head);
+        NewNode->prevNode = Tail;
+        
+    }
 }
 
-void RemoveNodeLRU(Node** Head, Node* Remove){
-    if(*Head == Remove){
-        Remove->nextNode =NULL;
-        Remove->prevNode =NULL;
-        *Head = Remove->lruNode;
-    } else {
-        Node* Current = *Head;
-        while(Current != NULL && Current->lruNode != Remove){
-            Current = Current->lruNode;
-        }
-        if(Current != NULL)
-            Current->lruNode = Remove->lruNode;
-        
-        Remove->nextNode =NULL;
-        Remove->prevNode =NULL;
+
+
+
+void AppendNodeLRU(Node** Head, Node* NewNode){
+    
+    if((*Head) == NULL){
+        *Head = NewNode;
+        (*Head)->lruNode = *Head;
+        (*Head)->prevNode = *Head;
     }
+    else
+    {
+        Node* Tail = (*Head)->prevNode;
+        
+        Tail->lruNode->prevNode = NewNode;
+        Tail->lruNode=NewNode;
+        
+        NewNode->lruNode = (*Head);
+        NewNode->prevNode = Tail;
+        
+    }
+}
+
+
+void RemoveNodeLRU(Node** head, Node* remove){
+    if(*head == remove){
+        
+        (*head)->prevNode->lruNode = remove->lruNode;
+        (*head)->lruNode->prevNode = remove->prevNode;
+        //head points to the address of the next node
+        
+        
+        *head = remove->lruNode;
+        
+        //if the head still exists,
+        
+        
+        
+        remove->prevNode = NULL;
+        remove->lruNode = NULL;
+        
+    } else {
+        Node* temp = remove;
+        //If the node to remove still has the previous node address
+        //The previous node is connected with the next node
+        remove->prevNode->lruNode = temp->lruNode;
+        //if the node to remove still has the next node address
+        //the next node address and the previous node address are connected together.
+        remove->lruNode->prevNode = remove->prevNode;
+        remove->prevNode = NULL;
+        remove->lruNode = NULL;
+     }
 }
 
 Node* GetNodeAtLRU(Node* Head, int Location){
@@ -229,6 +285,8 @@ int GetNodeCountLRU(Node* Head){
     while(Current != NULL){
         Current = Current->lruNode;
         Count++;
+        if(Current == Head)
+            break;
     }
     return Count;
 }

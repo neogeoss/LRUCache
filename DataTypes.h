@@ -9,7 +9,7 @@
 #ifndef DataTypes_h
 #define DataTypes_h
 
-typedef int ElementType;
+typedef long ElementType;
 
 typedef struct tagNode{
     ElementType value, key;

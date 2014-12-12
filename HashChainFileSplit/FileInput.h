@@ -11,7 +11,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "LinkedList.h"
 
-
+List ReadingFromtheFile(long maxLineRead);
 
 #endif /* defined(__HashChainFileSplit__FileInput__) */

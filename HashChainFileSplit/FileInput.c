@@ -9,15 +9,18 @@
 #include "FileInput.h"
 
 
-long ReadingFromtheFile(){
-    FILE* filePointer;
+
+List ReadingFromtheFile(long maxLineRead){
+    /*FILE* filePointer;
     
+    List aNewNodeList = NULL;
+   // List lastNodeContainer = NULL;
     
-    double firstVal;
-    double secVal;
-    long thirdVal = 0;
-    int fourthVal;
-    int fifthVal;
+    double timeInMilliSec=0;
+    double deviceIDNo=0;
+    long sectorNo = 0;
+    int noOfSectorsForOperation =0;
+    int readOrWrite=0;
     
     char read;
     char* line = NULL;
@@ -35,11 +38,28 @@ long ReadingFromtheFile(){
         exit(1);
     }
     
-    while(i<7 && (read = getline(&line, &len, filePointer)) != -1){
-        sscanf(line, "%lf %lf %ld %d %d", &firstVal, &secVal, &thirdVal, &fourthVal, &fifthVal);
-        printf("%lf %lf %ld %d %d\n", firstVal, secVal, thirdVal, fourthVal, fifthVal);
+    while((read = getline(&line, &len, filePointer)) != -1){
+        sscanf(line, "%lf %lf %ld %d %d", &timeInMilliSec, &deviceIDNo, &sectorNo, &noOfSectorsForOperation, &readOrWrite);
+       // printf("%lf %lf %ld %d %d\n", firstVal, secVal, thirdVal, fourthVal, fifthVal);
+        Node* aNode = CreateNodeLRU(sectorNo);
+        //aNewNodeList =
+        AppendNodeFileCircularLinkedList(&aNewNodeList, aNode);
+        
+     //  printf("\r Time in MilliSec: %lf . Sector No. reading : %ld. Sectors in operation at the moment: %d", timeInMilliSec, sectorNo, noOfSectorsForOperation);
+        //printf("\r%ld",  sectorNo);
+        //clrscr();
         i++;
+        if(i%1000 == 0){
+            printf("\r Time in MilliSec: %lf . Sector No. reading : %ld. Sectors in operation at the moment: %d", timeInMilliSec, sectorNo, noOfSectorsForOperation);
+        }
     }
+    printf("\r Time in MilliSec: %lf . Sector No. reading : %ld. Sectors in operation at the moment: %d", timeInMilliSec, sectorNo, noOfSectorsForOperation);
     
-    return thirdVal;
+    return aNewNodeList;*/
+    return NULL;
+}
+
+int nodeCount(List nodeName){
+    int nodeLength = GetNodeCountLRU(nodeName);
+    return nodeLength;
 }

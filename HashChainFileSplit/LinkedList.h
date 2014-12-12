@@ -27,6 +27,7 @@ void AppendNodeLRU(Node** Head, Node* NewNode);
 void RemoveNodeLRU(Node** Head, Node* Remove);
 Node* GetNodeAtLRU(Node* Head, int Location);
 int GetNodeCountLRU(Node* Head);
+void AppendNodeFileCircularLinkedList(Node** Head, Node* NewNode);
 
 Node* inputToLRULine(Node* list, int submittingNum);
 Node* CreateNodeLRU(ElementType newData);
