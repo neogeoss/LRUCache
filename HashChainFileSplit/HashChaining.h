@@ -25,5 +25,6 @@ int CHT_HashForInteger(ElementType Key, int TableSize);
 ElementType RetriveAHashValue(HashTable* HT, ElementType Key);
 
 void DeleteANodeFromtheHash(HashTable* HashTB, ElementType Key);
+ElementType hashNodeCounter(HashTable* HashTB, int TableSize);
 
 #endif

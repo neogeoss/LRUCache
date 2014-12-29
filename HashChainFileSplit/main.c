@@ -12,7 +12,8 @@
 #include "FileInput.h"
 
 #define MAX_HORIZANTAL_CACHE_SIZE 10
-#define MAX_CACHE_SIZE 1024*1024
+#define MAX_CACHE_BLOCKS 15
+#define HASH_ENTRY_SIZE 5
 
 /*int plainKeys1 [] =  {11, 21, 31, 41, 51};
 int plainKeys2 [] =  {12, 22, 32, 42, 52};
@@ -31,15 +32,19 @@ int inputKeys [] = {14, 44, 64, 74, 63, 73, 83, 42, 12};
 
 int inputKeysn [] = {14, 44, 64, 74, 13, 15, 84, 61 , 51};
 
+int inputValues [] = {1, 3, 44, 33, 23, 56, 3 , 54 , 21, 33, 81, 82, 74, 91, 61, 56,11, 21};
+int inputValues1 [] = { 9, 99, 69};
+int diskAccessValues [] = {1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0};
+
 //int inputKeysn1 [] = {51};
 
-/*List DummyDataFiller(int dataArray [], HashTable* HT , int actualLoopPeriod, List Lrulist){
+List DummyDataFiller(int dataArray [], int statusArray[], HashTable* HT , int actualLoopPeriod, List Lrulist){
     Node* newNode = NULL;
     Node* LRUNode = NULL;
     int loopPeriod = actualLoopPeriod;
     for(int i = 0; i<loopPeriod;i++){
         newNode = CreateNode(dataArray[i], dataArray[i]);
-        LRUNode = CreateNodeLRU(dataArray[i]);
+        LRUNode = CreateNodeLRU(dataArray[i], statusArray[i]);
         //newNode = CreateNode(randomValue, randomKey);
         AppendNodeIntoAHashTable(HT, newNode);
         AppendNodeLRU(&Lrulist, LRUNode);
@@ -48,7 +53,7 @@ int inputKeysn [] = {14, 44, 64, 74, 13, 15, 84, 61 , 51};
     
     return Lrulist;
     
-} */
+}
 
 /*void RandomDataFill(HashTable* HT, ElementType inputValue, Node** Lrulist){
     Node* newNode = NULL;
@@ -57,7 +62,7 @@ int inputKeysn [] = {14, 44, 64, 74, 13, 15, 84, 61 , 51};
     LRUNode = CreateNodeLRU(inputValue);
     AppendNodeIntoAHashTable(HT, newNode);
     AppendNodeLRU(Lrulist, LRUNode);
-} */
+}*/
 
 void FileDataFill(HashTable* HT, Node** Lrulist){
     FILE* filePointer;
@@ -90,11 +95,12 @@ void FileDataFill(HashTable* HT, Node** Lrulist){
     while((read = getline(&line, &len, filePointer)) != -1){
         sscanf(line, "%lf %lf %ld %d %d", &timeInMilliSec, &deviceIDNo, &sectorNo, &noOfSectorsForOperation, &readOrWrite);
         // printf("%lf %lf %ld %d %d\n", firstVal, secVal, thirdVal, fourthVal, fifthVal);
-        Node* aNode = CreateNodeLRU(sectorNo);
+        Node* aNode = CreateNodeLRU(sectorNo, sectorNo);
         Node* aHashNode = CreateNode(sectorNo, sectorNo);
         //aNewNodeList =
-        AppendNodeFileCircularLinkedList(Lrulist, aNode);
+        //AppendNodeFileCircularLinkedList(Lrulist, aNode);
         AppendNodeIntoAHashTable(HT, aHashNode);
+        AppendNodeLRU(Lrulist, aNode);
         
         //  printf("\r Time in MilliSec: %lf . Sector No. reading : %ld. Sectors in operation at the moment: %d", timeInMilliSec, sectorNo, noOfSectorsForOperation);
         //printf("\r%ld",  sectorNo);
@@ -127,12 +133,116 @@ void DisplayList(Node* List){
     
 }
 
+void DisplayDiskAccessStatusToo(Node* List){
+    int listSize = GetNodeCountLRU(List);
+    Node* current = NULL;
+    for(int i = 0; i<listSize; i++){
+        current = GetNodeAtLRU(List, i);
+        printf(" %ld ", current->value);
+    }
+    printf("\n\nRead Write Status\n");
+    for(int i = 0; i<listSize; i++){
+        current = GetNodeAtLRU(List, i);
+        printf(" %ld ", current->key);
+    }
+    printf("\n");
+    
+}
+
+
+void DisplayHashEntries(int tableSize, HashTable* HT){
+    printf("\n");
+    Node* aSampleList = NULL;
+    for(int i = 0; i<tableSize; i++){
+        aSampleList = GetAHorizontalSetofListData(HT, i);
+        printf("Hash Entry  %d: ", i);
+        for(int j = 0; j<GetNodeCount(aSampleList); j++){
+            Node* aNode = GetNodeAt(aSampleList, j);
+            printf("  %ld ", aNode->value);
+            
+        }
+        printf("\n");
+    }
+    
+}
+
+void FileReadingExperimentalChecker(HashTable* HT, Node* lruList){
+    ElementType aValueToFind = 47862992;
+    Node* aNode = CreateNodeLRU(aValueToFind, aValueToFind);
+    if(RetriveAHashValue(HT, aValueToFind) == aValueToFind){
+        
+        Node* aNodeToRemove = GetNodeAt(lruList,LookUpFunctionForIndexNum(lruList, aValueToFind));
+        RemoveNodeLRU(&lruList, aNodeToRemove);
+        AppendNodeLRU(&lruList, aNode);
+        printf("\nIt is a value in the hash. LRU operation has been done with it.\n");
+    } else {
+        Node* firstNode = GetNodeAt(lruList, 0);
+        AppendNodeLRU(&lruList, aNode);
+        RemoveNodeLRU(&lruList, firstNode);
+        printf("\nNo such a value found in the hash, It is a new value, having been added to the LRU. ");
+        
+    }
+}
+
+
+void FillingData(HashTable* HT, Node** lruList, int inputValues [], int theLength, int TableSize){
+    
+    Node* newNode = NULL;
+    Node* LRUNode = NULL;
+    int loopPeriod = theLength;
+    for(int i = 0; i<loopPeriod;i++){
+        
+        newNode = CreateNode(inputValues[i], inputValues[i]);
+        LRUNode = CreateNodeLRU(inputValues[i], inputValues[i]);
+        //newNode = CreateNode(randomValue, randomKey);
+        
+        if(RetriveAHashValue(HT, inputValues[i]) != inputValues[i]){
+         AppendNodeIntoAHashTable(HT, newNode);
+         AppendNodeLRU(lruList, LRUNode);
+        
+            if(hashNodeCounter(HT, TableSize)> MAX_CACHE_BLOCKS){
+               Node* firstNode = GetNodeAtLRU(*lruList, 0);
+                RemoveNodeLRU(lruList, firstNode);
+                
+                DeleteANodeFromtheHash(HT, firstNode->key);
+            }
+            
+        } else {
+            DeleteANodeFromtheHash(HT, inputValues[i]);
+            
+            ElementType index = LookUpFunctionForIndexNum(*lruList, inputValues[i]);
+            Node* aNode = GetNodeAtLRU(*lruList, index);
+            RemoveNodeLRU(lruList, aNode);
+            
+            if((*lruList)->value == aNode->value){
+                (*lruList) = NULL;
+            }
+            
+            AppendNodeIntoAHashTable(HT, CreateNode(inputValues[i], inputValues[i]));
+            AppendNodeLRU(lruList, aNode);
+            
+            //RemoveNodeLRU(&lruList, inputValues[i]);
+        }
+        
+    
+    
+   
+    }
+}
+
+void displayInitialInputs(int inputs [], int lengthOfInputs){
+    printf("\nHere is a list of inputs : ");
+    for(int i = 0; i < lengthOfInputs; i++){
+        printf(" %d ", inputs [i]);
+    }
+}
+
 int main(int argc, const char * argv[]) {
     
   /*  int hitCounter=0;
     
     int numberOfAccessAttempts = 10;*/
-    int tableSize = 1024;
+    int tableSize = HASH_ENTRY_SIZE;
   //  int contentsIntheCache = 100;
     
     
@@ -153,9 +263,53 @@ int main(int argc, const char * argv[]) {
     
     Node* lruList = NULL;
     
+    //FileDataFill(HT, &lruList);
+    displayInitialInputs(inputValues, sizeof(inputValues)/sizeof(int));
+    FillingData(HT, &lruList, inputValues, sizeof(inputValues)/sizeof(int), tableSize);
+    DisplayHashEntries(tableSize, HT);
+    printf("\nLRU List!\n");
+    DisplayDiskAccessStatusToo(lruList);
     
-    FileDataFill(HT, &lruList);
-    printf("\nFile reading has been complete!\n");
+    printf(" %ld ",RetriveAHashValue(HT, 5));
+    /*DeleteANodeFromtheHash(HT, 1);
+    DisplayHashEntries(tableSize, HT);*/
+    
+  /* lruList = DummyDataFiller(inputValues, diskAccessValues, HT, sizeof(inputValues)/sizeof(int), lruList);
+    DisplayHashEntries(tableSize, HT);
+    printf("\n %ld ",hashNodeCounter(HT, tableSize));*/
+    //DisplayHashEntries(tableSize, HT);
+    //printf("\n %ld", RetriveAHashValue(HT, 15));
+    //DeleteANodeFromtheHash(HT, 7);
+    //DisplayHashEntries(tableSize, HT);
+    //FileDataFill(HT, &lruList);
+   // FillingData(HT, lruList, inputValues, sizeof(inputValues)/sizeof(int), tableSize);
+    //printf("\nFile reading has been complete!\n");
+    //DisplayHashEntries(tableSize, HT);
+    
+    /*printf("\nHash Entries!\n");
+    DisplayHashEntries(tableSize, HT);
+    
+    
+    
+    printf("\nLRU List!\n");
+    DisplayDiskAccessStatusToo(lruList);*/
+   /* ElementType aValueToFind = 47862992;
+    Node* aNode = CreateNodeLRU(aValueToFind);
+    if(RetriveAHashValue(HT, aValueToFind) == aValueToFind){
+        
+        Node* aNodeToRemove = GetNodeAt(lruList,LookUpFunctionForIndexNum(lruList, aValueToFind));
+        RemoveNodeLRU(&lruList, aNodeToRemove);
+        AppendNodeLRU(&lruList, aNode);
+        printf("\nIt is a value in the hash. LRU operation has been done with it.\n");
+    } else {
+        Node* firstNode = GetNodeAt(lruList, 0);
+        AppendNodeLRU(&lruList, aNode);
+        RemoveNodeLRU(&lruList, firstNode);
+        printf("\nNo such a value found in the hash, It is a new value, having been added to the LRU. ");
+        
+    }*/
+    
+    
     /*for(int i = 0; i<100; i++){
         RandomDataFill(HT, rand()%100, &lruList);
     }*/

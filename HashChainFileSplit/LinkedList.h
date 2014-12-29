@@ -16,20 +16,20 @@
 
 Node* CreateNode(ElementType newData, ElementType key);
 void DestroyNode(Node* node);
-int LookUpFunctionForValue(Node* head, int numInput);
-int LookUpFunctionForIndexNum(Node* head, int numInput);
+ElementType LookUpFunctionForValue(Node* head, ElementType numInput);
+ElementType LookUpFunctionForIndexNum(Node* head, ElementType numInput);
 void RemoveNode(Node** head, Node* remove);
-Node* GetNodeAt(Node* head, int location);
-int GetNodeCount(Node* head);
+Node* GetNodeAt(Node* head, ElementType location);
+long GetNodeCount(Node* head);
 void AppendNode(Node** head, Node* newNode);
-List LRUOperationForAsingleBuffer(List theList, ElementType Key, ElementType result, int indexForTheResult, int MAX_HORIZANTAL_CACHE_SIZE);
+List LRUOperationForAsingleBuffer(List theList, ElementType Key, ElementType result, ElementType indexForTheResult, ElementType MAX_HORIZANTAL_CACHE_SIZE);
 void AppendNodeLRU(Node** Head, Node* NewNode);
 void RemoveNodeLRU(Node** Head, Node* Remove);
-Node* GetNodeAtLRU(Node* Head, int Location);
-int GetNodeCountLRU(Node* Head);
+Node* GetNodeAtLRU(Node* Head, ElementType Location);
+long GetNodeCountLRU(Node* Head);
 void AppendNodeFileCircularLinkedList(Node** Head, Node* NewNode);
 
-Node* inputToLRULine(Node* list, int submittingNum);
-Node* CreateNodeLRU(ElementType newData);
+Node* inputToLRULine(Node* list, ElementType submittingNum);
+Node* CreateNodeLRU(ElementType newData, ElementType keyInput);
 
 #endif /* defined(__HashChainFileSplit__LinkedList__) */

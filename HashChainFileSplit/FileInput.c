@@ -59,7 +59,7 @@ List ReadingFromtheFile(long maxLineRead){
     return NULL;
 }
 
-int nodeCount(List nodeName){
-    int nodeLength = GetNodeCountLRU(nodeName);
+ElementType nodeCount(List nodeName){
+    ElementType nodeLength = GetNodeCountLRU(nodeName);
     return nodeLength;
 }

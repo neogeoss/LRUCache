@@ -21,12 +21,12 @@ Node* CreateNode(ElementType newData, ElementType newKey){
     return newNode;
 }
 
-Node* CreateNodeLRU(ElementType newData){
+Node* CreateNodeLRU(ElementType newData, ElementType keyInput){
     
     Node* newNode = (Node*)malloc(sizeof(Node));
     
     newNode->value = newData;
-    newNode->key = newData;
+    newNode->key = keyInput;
     newNode->prevNode = NULL;
     newNode->nextNode = NULL;
     newNode->lruNode = NULL;
@@ -43,12 +43,12 @@ void DestroyNode(Node* node){
 
 
 
-int LookUpFunctionForValue(Node* head, int numInput){
-    int foundOrNot = 0;
-    int indexNum = -1;
-    int valueReturned = 0;
-    for(int i=0; i<GetNodeCount(head); i++){
-        int numData = GetNodeAt(head, i)->key;
+ElementType LookUpFunctionForValue(Node* head, ElementType numInput){
+    ElementType foundOrNot = 0;
+    ElementType indexNum = -1;
+    ElementType valueReturned = 0;
+    for(ElementType i=0; i<GetNodeCount(head); i++){
+        ElementType numData = GetNodeAt(head, i)->key;
         if(numInput == numData){
             indexNum = i;
             foundOrNot = 1;
@@ -64,12 +64,12 @@ int LookUpFunctionForValue(Node* head, int numInput){
 
 
 
-int LookUpFunctionForIndexNum(Node* head, int numInput){
-    int foundOrNot = 0;
-    int indexNum = -1;
-    int valueReturned = 0;
-    for(int i=0; i<GetNodeCount(head); i++){
-        int numData = GetNodeAt(head, i)->key;
+ElementType LookUpFunctionForIndexNum(Node* head, ElementType numInput){
+    ElementType foundOrNot = 0;
+    ElementType indexNum = -1;
+    ElementType valueReturned = 0;
+    for(ElementType i=0; i<GetNodeCount(head); i++){
+        ElementType numData = GetNodeAt(head, i)->key;
         if(numInput == numData){
             indexNum = i;
             foundOrNot = 1;
@@ -90,13 +90,13 @@ void RemoveNode(Node** head, Node* remove){
     //if the head is identical to the one to remove
     if(*head == remove){
         
-        
+        (*head)->prevNode->nextNode = remove->nextNode;
+        (*head)->nextNode->prevNode = remove->prevNode;
         //head points to the address of the next node
         *head = remove->nextNode;
         
         //if the head still exists,
-        if((*head) != NULL)//Null is assigned because the previous node does not exist.
-            (*head)->prevNode = NULL;
+       
         
         
         remove->prevNode = NULL;
@@ -105,10 +105,10 @@ void RemoveNode(Node** head, Node* remove){
     } else {
         Node* temp = remove;
         //If the node to remove still has the previous node address
-        if(remove->prevNode != NULL)//The previous node is connected with the next node
+        //The previous node is connected with the next node
             remove->prevNode->nextNode = temp->nextNode;
         //if the node to remove still has the next node address
-        if(remove->nextNode != NULL)//the next node address and the previous node address are connected together.
+        //the next node address and the previous node address are connected together.
             remove->nextNode->prevNode = remove->prevNode;
         remove->prevNode = NULL;
         remove->nextNode = NULL;
@@ -117,7 +117,7 @@ void RemoveNode(Node** head, Node* remove){
 
 
 //Node searching
-Node* GetNodeAt(Node* head, int location){
+Node* GetNodeAt(Node* head, ElementType location){
     Node* current = head;
     
     while(current != NULL && (--location) >= 0){
@@ -127,34 +127,43 @@ Node* GetNodeAt(Node* head, int location){
 }
 
 //Count nodes
-int GetNodeCount(Node* head){
-    int count = 0;
+ElementType GetNodeCount(Node* head){
+    unsigned long count = 0;
     Node* current = head;
     
     while(current != NULL){
         current = current->nextNode;
         count++;
+        if(current == head){
+            break;
+        }
     }
     return count;
 }
 
 
 
-void AppendNode(Node** head, Node* newNode){
-    if(*head == NULL)
-        *head = newNode;
-    else {
-        Node* tail = *head;
-        while(tail->nextNode != NULL)
-            tail = tail->nextNode;
-        
-        tail->nextNode = newNode;
-        //The current tail node is pointed by the preNode of the new node.
-        newNode->prevNode = tail;
+void AppendNode(Node** Head, Node* NewNode){
+    if((*Head) == NULL){
+        *Head = NewNode;
+        (*Head)->lruNode = *Head;
+        (*Head)->prevNode = *Head;
     }
+    else
+    {
+        Node* Tail = (*Head)->prevNode;
+        
+        Tail->lruNode->prevNode = NewNode;
+        Tail->lruNode=NewNode;
+        
+        NewNode->lruNode = (*Head);
+        NewNode->prevNode = Tail;
+        
+    }
+
 }
 
-List LRUOperationForAsingleBuffer(List thList, ElementType Key, ElementType result, int indexForTheResult, int MAX_HORIZANTAL_CACHE_SIZE){
+List LRUOperationForAsingleBuffer(List thList, ElementType Key, ElementType result, ElementType indexForTheResult, ElementType MAX_HORIZANTAL_CACHE_SIZE){
     
     List newProcessedList = thList;
     if(result == 0){
@@ -269,7 +278,7 @@ void RemoveNodeLRU(Node** head, Node* remove){
      }
 }
 
-Node* GetNodeAtLRU(Node* Head, int Location){
+Node* GetNodeAtLRU(Node* Head, ElementType Location){
     Node* Current = Head;
     while(Current != NULL && (--Location) >= 0) {
         Current = Current->lruNode;
@@ -278,8 +287,8 @@ Node* GetNodeAtLRU(Node* Head, int Location){
 }
 
 
-int GetNodeCountLRU(Node* Head){
-    int Count = 0;
+long GetNodeCountLRU(Node* Head){
+    unsigned long Count = 0;
     Node* Current = Head;
     
     while(Current != NULL){
@@ -291,12 +300,12 @@ int GetNodeCountLRU(Node* Head){
     return Count;
 }
 
-int LookUpFunctionForIndexNumLRU(Node* head, int numInput){
-    int foundOrNot = 0;
-    int indexNum = -1;
-    int valueReturned = 0;
-    for(int i=0; i<GetNodeCountLRU(head); i++){
-        int numData = GetNodeAtLRU(head, i)->key;
+ElementType LookUpFunctionForIndexNumLRU(Node* head, ElementType numInput){
+    ElementType foundOrNot = 0;
+    ElementType indexNum = -1;
+    ElementType valueReturned = 0;
+    for(ElementType i=0; i<GetNodeCountLRU(head); i++){
+        ElementType numData = GetNodeAtLRU(head, i)->key;
         if(numInput == numData){
             indexNum = i;
             foundOrNot = 1;
@@ -310,20 +319,20 @@ int LookUpFunctionForIndexNumLRU(Node* head, int numInput){
 }
 
 
-Node* inputToLRULine(Node* list, int submittingNum){
+Node* inputToLRULine(Node* list, ElementType submittingNum){
     
     List newList = list;
-    int numToSubmit = submittingNum;
+    ElementType numToSubmit = submittingNum;
     
     //printf("a generated number moving into the cache is %d\n ", numToSubmit);
     Node* newNode = NULL;
     Node* firstNode = NULL;
     //int cacheElementCount = sizeof(numbersInCache)/sizeof(int);
     
-    int indexNumForOperation = LookUpFunctionForIndexNumLRU(list, numToSubmit);//returns an index number, -1 is returned when it cannot find any.
+    ElementType indexNumForOperation = LookUpFunctionForIndexNumLRU(list, numToSubmit);//returns an index number, -1 is returned when it cannot find any.
     if(indexNumForOperation == -1 ){
         
-        List newNodeToLRU = CreateNodeLRU(numToSubmit);
+        List newNodeToLRU = CreateNodeLRU(numToSubmit, numToSubmit);
         
         firstNode = GetNodeAtLRU(list, 0);
         
@@ -345,12 +354,12 @@ Node* inputToLRULine(Node* list, int submittingNum){
     return newList;
 }
 
-int HashLRUNodeRemovalOperation(Node** thList, ElementType Key){
+ElementType HashLRUNodeRemovalOperation(Node** thList, ElementType Key){
     //List newProcessedList = thList;
-    int indicator = 0; //Nothing in the Hash.
+    ElementType indicator = 0; //Nothing in the Hash.
     List oneToRemove = NULL;
-    int nodeLength = GetNodeCount(*thList);
-    for(int i = 0; i<nodeLength; i++){
+    ElementType nodeLength = GetNodeCount(*thList);
+    for(ElementType i = 0; i<nodeLength; i++){
         if(Key == GetNodeAt(*thList, i)->key){
             oneToRemove = GetNodeAt(*thList,i);
             indicator = 1;

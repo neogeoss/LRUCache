@@ -66,6 +66,7 @@ ElementType RetriveAHashValue(HashTable* HT, ElementType Key){
     List myList = HT->linkedListsIntheTable[Address];
     
     List Target = NULL;
+    List Head = myList;
     
    
     
@@ -76,13 +77,14 @@ ElementType RetriveAHashValue(HashTable* HT, ElementType Key){
         if(myList->key == Key){
             Target = myList;
             break;
-        }
-        
-        if(myList->nextNode == NULL){
-            return 0;
-            break;
         }else{
             myList = myList->nextNode;}
+        
+        if(Head == myList){
+            return 0;
+            break;
+        }
+        
         
     }
     
@@ -171,10 +173,23 @@ void DeleteANodeFromtheHash(HashTable* HashTB, ElementType Key){
     
     
     indicator = HashLRUNodeRemovalOperation(&theList, Key);
+    if(Key == theList->value){
+        theList = NULL;
+    }
     (HashTB)->linkedListsIntheTable[hashedKeySoAddress] = theList;
     
     
     
+}
+
+ElementType hashNodeCounter(HashTable* HashTB, int TableSize){
+    int counter = 0;
+    
+    for(int i = 0; i<TableSize; i++){
+        List theList = HashTB->linkedListsIntheTable[i];
+        counter += GetNodeCount(theList);
+    }
+    return counter;
 }
 
 
